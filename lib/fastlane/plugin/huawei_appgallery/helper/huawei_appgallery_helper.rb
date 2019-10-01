@@ -74,26 +74,10 @@ module Fastlane
           UI.user_error!("Cannot read apk at: #{apk_path}")
         end
 
-        # obtain upload url
-        UI.message("Obtaining upload url ...")
-        uri = URI("https://connect-api.cloud.huawei.com/api/publish/v1/uploadUrl?suffix=apk")
-        http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = true
-        request = Net::HTTP::Get.new(uri)
-        request['Cookie'] = cookie
-        request['Accept'] = 'application/json'
-        result = http.request(request)
-        result_json = JSON.parse(result.body)
-        upload_url = result_json['uploadUrl'] # this is the upload server
-        auth_code = result_json['authCode']
-        if result.code.to_i != 200 || upload_url.nil? || auth_code.nil?
-          UI.user_error!("Cannot obtain upload url!")
-        end
-
         # upload apk
-        UI.message("Uploading apk to #{upload_url} ...")
+        UI.message("Uploading apk ...")
         boundary = "755754302457647"
-        uri = URI("https://#{upload_url}/api/publish/v1/uploadFile")
+        uri = URI("https://connect-api.cloud.huawei.com/api/publish/v1/uploadFile")
         http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = true
         request = Net::HTTP::Post.new(uri)
